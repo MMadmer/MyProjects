@@ -1,0 +1,19 @@
+﻿IniRead, name, temp.ini, build_options, name
+IniRead, 1st, temp.ini, build_options, name
+IniRead, 2nd, temp.ini, build_options, name
+IniRead, 3rd, temp.ini, build_options, name
+IniRead, 4th, temp.ini, build_options, name
+
+Gui, Add, Edit, x92 y19 w190 h30 , Edit
+Gui, Add, Button, x222 y189 w100 h30 , Применить
+Gui, Add, Button, x52 y189 w100 h30 , Отмена
+Gui, Add, Edit, x62 y79 w80 h30 , Edit
+Gui, Add, Edit, x62 y129 w80 h30 , Edit
+Gui, Add, Edit, x232 y79 w80 h30 , Edit
+Gui, Add, Edit, x232 y129 w80 h30 , Edit
+; Generated using SmartGUI Creator for SciTE
+Gui, Show, w396 h271, Untitled GUI
+return
+
+GuiClose:
+ExitApp
