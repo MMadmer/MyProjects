@@ -1,0 +1,22 @@
+﻿  main.cpp
+c:\users\artem\source\repos\mario\mario\main.cpp(92): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(97): warning C4305: *=: усечение из "double" в "float"
+c:\users\artem\source\repos\mario\mario\main.cpp(99): warning C4244: +=: преобразование "double" в "float", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(201): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(202): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(205): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(207): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(226): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(227): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(274): warning C4244: инициализация: преобразование "sf::Int64" в "float", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(275): warning C4244: инициализация: преобразование "sf::Int64" в "float", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(282): warning C4244: +=: преобразование "double" в "float", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(293): warning C4305: =: усечение из "double" в "float"
+c:\users\artem\source\repos\mario\mario\main.cpp(294): warning C4305: =: усечение из "double" в "float"
+c:\users\artem\source\repos\mario\mario\main.cpp(295): warning C4305: =: усечение из "double" в "float"
+  Создание кода
+  2 of 83 functions ( 2.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Создание кода завершено
+  mario.vcxproj -> C:\Users\artem\source\repos\mario\Release\mario.exe

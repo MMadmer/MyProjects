@@ -1,0 +1,11 @@
+﻿  main.cpp
+c:\users\artem\source\repos\mario\mario\main.cpp(52): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(59): warning C4244: +=: преобразование "double" в "float", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(72): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(73): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(76): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(78): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(101): warning C4244: инициализация: преобразование "sf::Int64" в "float", возможна потеря данных
+c:\users\artem\source\repos\mario\mario\main.cpp(112): warning C4305: =: усечение из "double" в "float"
+c:\users\artem\source\repos\mario\mario\main.cpp(116): warning C4305: =: усечение из "double" в "float"
+  mario.vcxproj -> C:\Users\artem\source\repos\mario\x64\Debug\mario.exe
