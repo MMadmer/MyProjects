@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2016
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32510.428
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Saper", "Saper\Saper.vcxproj", "{6554066A-DD2A-457A-9BEC-BEAAE84050AF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sapper", "Saper\Saper.vcxproj", "{6554066A-DD2A-457A-9BEC-BEAAE84050AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
