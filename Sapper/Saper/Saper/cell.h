@@ -22,9 +22,9 @@ public:
 
 	cell();
 
-	void setCellParameters(int x, int y);
+	void SetCellParameters(int x, int y);
 
-	void drawCells();
+	void DrawCells();
 
-	void setTextureCell(int x);
+	void SetTextureCell(int x);
 };

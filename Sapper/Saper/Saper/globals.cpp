@@ -1,10 +1,10 @@
 #include "globals.h"
 
 
-int lastNumberMap = 0; //Прошлая карта
-int nowNumberMap = 0; //Текущая карта
-bool fail = false; //Состояние игры
-bool win = false;
+int gLastNumberMap = 0; //Прошлая карта
+int gNowNumberMap = 0; //Текущая карта
+bool gFail = false; //Состояние игры
+bool gWin = false;
 int voidCells = 0;
 int clickedVoidCells = 0;
-int mines = 0; //Максимум мин на поле
+int gMines = 0; //Максимум мин на поле

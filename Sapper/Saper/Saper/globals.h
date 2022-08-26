@@ -1,9 +1,9 @@
 #pragma once
 
-extern int lastNumberMap; //Прошлая карта
-extern int nowNumberMap; //Текущая карта
-extern bool fail; //Состояние игры
-extern bool win;
+extern int gLastNumberMap; //Прошлая карта
+extern int gNowNumberMap; //Текущая карта
+extern bool gFail; //Состояние игры
+extern bool gWin;
 extern int voidCells;
 extern int clickedVoidCells;
-extern int mines; //Максимум мин на поле
+extern int gMines; //Максимум мин на поле
