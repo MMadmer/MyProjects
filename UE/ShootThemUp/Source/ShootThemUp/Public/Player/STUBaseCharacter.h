@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "STUBaseCharacter.generated.h"
 
+class USpringArmComponent;
 class UCameraComponent;
 
 UCLASS()
@@ -18,6 +19,9 @@ public:
 	ASTUBaseCharacter();
 
 protected:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	USpringArmComponent* SpringArmComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UCameraComponent* CameraComponent;
@@ -35,5 +39,7 @@ public:
 private:
 	void MoveForward(float Amount);
 	void MoveRight(float Amount);
+	void LookUp(float Amount);
+	void TurnAround(float Amount);
 
 };
