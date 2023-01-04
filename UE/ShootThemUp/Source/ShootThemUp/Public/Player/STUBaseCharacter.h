@@ -42,6 +42,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	bool IsMovingForward = false;
 
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	float GetMovementDirection() const;
+
 private:
 	bool WantsToRun = false;
 
