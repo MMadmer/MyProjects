@@ -55,7 +55,7 @@ void ASTUBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UE_LOG(LogBaseCharacter, Display, TEXT("Input blocked: %s"), (InputBlocked ? TEXT("True") : TEXT("False")));
+	
 }
 
 // Called to bind functionality to input
@@ -80,11 +80,10 @@ void ASTUBaseCharacter::MoveForward(float Amount)
 {
 	if (InputBlocked)
 	{
-		IsMoving = IsMovingForward = false;
+		IsMovingForward = false;
 		return;
 	}
 
-	IsMoving = Amount != 0.0f;
 	IsMovingForward = Amount > 0.0f;
 
 	if (Amount == 0.0f) return;
@@ -96,11 +95,8 @@ void ASTUBaseCharacter::MoveRight(float Amount)
 {
 	if (InputBlocked)
 	{
-		IsMoving = false;
 		return;
 	}
-
-	IsMoving = Amount != 0.0f;
 
 	if (Amount == 0.0f) return;
 
@@ -120,6 +116,11 @@ void ASTUBaseCharacter::OnStopRunning()
 bool ASTUBaseCharacter::IsRunning() const
 {
 	return WantsToRun && IsMovingForward && !GetVelocity().IsZero();
+}
+
+bool ASTUBaseCharacter::IsMoving() const
+{
+	return !GetVelocity().IsZero();
 }
 
 float ASTUBaseCharacter::GetMovementDirection() const

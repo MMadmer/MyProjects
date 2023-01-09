@@ -65,8 +65,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	bool IsMovingForward = false;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Movement")
-	bool IsMoving = false;
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	bool IsMoving() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	bool IsRunning() const;
