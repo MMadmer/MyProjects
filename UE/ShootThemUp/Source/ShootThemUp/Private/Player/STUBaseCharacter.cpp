@@ -9,6 +9,7 @@
 #include "Components/STUHealthComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/Controller.h"
+#include "TimerManager.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter, All, All)
 
@@ -54,7 +55,7 @@ void ASTUBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
+	UE_LOG(LogBaseCharacter, Display, TEXT("Input blocked: %s"), (InputBlocked ? TEXT("True") : TEXT("False")));
 }
 
 // Called to bind functionality to input
@@ -77,6 +78,13 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 void ASTUBaseCharacter::MoveForward(float Amount)
 {
+	if (InputBlocked)
+	{
+		IsMoving = IsMovingForward = false;
+		return;
+	}
+
+	IsMoving = Amount != 0.0f;
 	IsMovingForward = Amount > 0.0f;
 
 	if (Amount == 0.0f) return;
@@ -86,6 +94,14 @@ void ASTUBaseCharacter::MoveForward(float Amount)
 
 void ASTUBaseCharacter::MoveRight(float Amount)
 {
+	if (InputBlocked)
+	{
+		IsMoving = false;
+		return;
+	}
+
+	IsMoving = Amount != 0.0f;
+
 	if (Amount == 0.0f) return;
 
 	AddMovementInput(GetActorRightVector(), Amount);
@@ -144,7 +160,19 @@ void ASTUBaseCharacter::OnGroundLanded(const FHitResult& Hit)
 
 	if (FallVelocityZ < LandedDamageVelocity.X) return;
 
+	// Повреждение
 	const auto FinalDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
 	//UE_LOG(LogBaseCharacter, Display, TEXT("Final damage: %f"), FinalDamage);
 	TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
+
+	// Блок управления при повреждении
+	InputBlocked = true;
+	GetWorld()->GetTimerManager().SetTimer(UnblockMovementHandle, this, &ASTUBaseCharacter::UnblockMovement, 1.0f, false, LandedAnim);
+}
+
+void ASTUBaseCharacter::UnblockMovement()
+{
+	if (!GetWorld()) return;
+
+	InputBlocked = false;
 }

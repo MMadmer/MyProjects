@@ -37,6 +37,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	UAnimMontage* DeathAnimMontage;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Animation", meta = (ClampMin = "0"))
+	float LandedAnim = 0.5f;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Damage", meta = (ClampMin = "0"))
 	float LifeSpanOnDeath = 5.0f;
 
@@ -56,16 +59,24 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Movement")
-	bool IsRunning() const;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	bool InputBlocked = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	bool IsMovingForward = false;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	bool IsMoving = false;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	bool IsRunning() const;
+
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	float GetMovementDirection() const;
 
+
 private:
+	FTimerHandle UnblockMovementHandle;
 	bool WantsToRun = false;
 
 	void MoveForward(float Amount);
@@ -78,4 +89,6 @@ private:
 
 	UFUNCTION()
 	void OnGroundLanded(const FHitResult& Hit);
+
+	void UnblockMovement();
 };
