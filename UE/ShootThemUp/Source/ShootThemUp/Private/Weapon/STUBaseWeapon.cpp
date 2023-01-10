@@ -19,4 +19,5 @@ void ASTUBaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	
 }
