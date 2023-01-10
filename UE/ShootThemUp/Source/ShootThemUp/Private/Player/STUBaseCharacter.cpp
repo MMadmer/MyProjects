@@ -29,7 +29,6 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjInit):Super(Ob
 
 	// Çהמנמגüו
 	HealthComponent = CreateDefaultSubobject<USTUHealthComponent>("HealthComponent");
-	
 	HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
 	HealthTextComponent->SetupAttachment(GetRootComponent());
 }
@@ -101,6 +100,23 @@ void ASTUBaseCharacter::MoveRight(float Amount)
 	if (Amount == 0.0f) return;
 
 	AddMovementInput(GetActorRightVector(), Amount);
+}
+
+void ASTUBaseCharacter::AddControllerYawInput(float Val)
+{
+	if (InputBlocked)
+	{
+		if (bUseControllerRotationYaw) bUseControllerRotationYaw = false;
+	}
+	else
+	{
+		if (!bUseControllerRotationYaw)
+		{
+			bUseControllerRotationYaw = true;
+		}
+	}
+
+	Super::AddControllerYawInput(Val);
 }
 
 void ASTUBaseCharacter::OnStartRunning()
