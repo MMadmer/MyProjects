@@ -9,6 +9,7 @@
 #include "Components/STUHealthComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/Controller.h"
+#include "Weapon/STUBaseWeapon.h"
 #include "TimerManager.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter, All, All)
@@ -47,6 +48,8 @@ void ASTUBaseCharacter::BeginPlay()
 	HealthComponent->OnHealthChanged.AddUObject(this, &ASTUBaseCharacter::OnHealthChanged);
 
 	LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnGroundLanded);
+
+	SpawnWeapon();
 }
 
 // Called every frame
@@ -102,6 +105,16 @@ void ASTUBaseCharacter::MoveRight(float Amount)
 	AddMovementInput(GetActorRightVector(), Amount);
 }
 
+void ASTUBaseCharacter::Jump()
+{
+	if (InputBlocked)
+	{
+		return;
+	}
+
+	Super::Jump();
+}
+
 void ASTUBaseCharacter::AddControllerYawInput(float Val)
 {
 	if (InputBlocked)
@@ -136,7 +149,7 @@ bool ASTUBaseCharacter::IsRunning() const
 
 bool ASTUBaseCharacter::IsMoving() const
 {
-	return !GetVelocity().IsZero();
+	return !GetVelocity().IsZero() && !GetCharacterMovement()->IsFalling();
 }
 
 float ASTUBaseCharacter::GetMovementDirection() const
@@ -183,8 +196,11 @@ void ASTUBaseCharacter::OnGroundLanded(const FHitResult& Hit)
 	TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
 
 	// Блок управления при повреждении
-	InputBlocked = true;
-	GetWorld()->GetTimerManager().SetTimer(UnblockMovementHandle, this, &ASTUBaseCharacter::UnblockMovement, 1.0f, false, LandedAnim);
+	if (CanLandedBlock)
+	{
+		InputBlocked = true;
+		GetWorld()->GetTimerManager().SetTimer(UnblockMovementHandle, this, &ASTUBaseCharacter::UnblockMovement, 1.0f, false, LandedAnim);
+	}
 }
 
 void ASTUBaseCharacter::UnblockMovement()
@@ -192,4 +208,16 @@ void ASTUBaseCharacter::UnblockMovement()
 	if (!GetWorld()) return;
 
 	InputBlocked = false;
+}
+
+void ASTUBaseCharacter::SpawnWeapon()
+{
+	if (!GetWorld()) return;
+
+	const auto  Weapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponClass);
+	if (Weapon)
+	{
+		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
+		Weapon->AttachToComponent(GetMesh(), AttachmentRules, "WeaponSocket");
+	}
 }

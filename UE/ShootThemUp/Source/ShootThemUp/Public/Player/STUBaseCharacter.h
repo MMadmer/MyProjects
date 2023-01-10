@@ -10,6 +10,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class USTUHealthComponent;
 class UTextRenderComponent;
+class ASTUBaseWeapon;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
@@ -49,10 +50,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage", meta = (ClampMin = "0"))
 	FVector2D LandedDamage = FVector2D(1.0f, 100.0f);
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TSubclassOf<ASTUBaseWeapon> WeaponClass;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	virtual void AddControllerYawInput(float Val) override;
+	virtual void Jump() override;
 
 public:	
 	// Called every frame
@@ -60,6 +65,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	bool CanLandedBlock = true;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	bool InputBlocked = false;
@@ -93,4 +101,6 @@ private:
 	void OnGroundLanded(const FHitResult& Hit);
 
 	void UnblockMovement();
+
+	void SpawnWeapon();
 };
