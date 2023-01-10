@@ -14,7 +14,7 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
-
+		
 public:	
 	// Sets default values for this component's properties
 	USTUHealthComponent();
