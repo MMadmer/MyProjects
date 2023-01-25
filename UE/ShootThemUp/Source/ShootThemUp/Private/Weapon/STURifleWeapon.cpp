@@ -24,6 +24,12 @@ void ASTURifleWeapon::MakeShot()
 		return;
 	}
 
+	if (IsClipEmpty())
+	{
+		OnClipEmpty.Broadcast();
+		return;
+	}
+
 	FVector TraceStart, TraceEnd;
 	if (!GetTraceData(TraceStart, TraceEnd))
 	{

@@ -22,6 +22,9 @@ public:
 	void StopFire();
 	void NextWeapon();
 	void Reload();
+
+	bool GetWeaponUIData(FWeaponUIData& UIData) const;
+	bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
@@ -66,8 +69,8 @@ private:
 	bool CanFire() const;
 	bool CanEquip() const;
 	bool CanReload() const;
+	void ReloadStarting();
 
 	void OnEmptyClip();
-	void ChangeClip();
 	
 };

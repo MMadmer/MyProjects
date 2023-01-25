@@ -143,9 +143,10 @@ void USTUWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComponent)
 void USTUWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent)
 {
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
-	if (!Character || Character->GetMesh() != MeshComponent) return;
+	if (!Character || Character->GetMesh() != MeshComponent || !CurrentWeapon) return;
 
 	ReloadAnimInProgress = false;
+	CurrentWeapon->ChangeClip();
 	CurrentWeapon->LogAmmo();
 }
 
@@ -156,7 +157,7 @@ bool USTUWeaponComponent::CanFire() const
 
 bool USTUWeaponComponent::CanEquip() const
 {
-	return !EquipAnimInProgress && !ReloadAnimInProgress;
+	return !EquipAnimInProgress;// && !ReloadAnimInProgress;
 }
 
 bool USTUWeaponComponent::CanReload() const
@@ -166,14 +167,13 @@ bool USTUWeaponComponent::CanReload() const
 
 void USTUWeaponComponent::OnEmptyClip()
 {
-	ChangeClip();
+	ReloadStarting();
 }
 
-void USTUWeaponComponent::ChangeClip()
+void USTUWeaponComponent::ReloadStarting()
 {
 	if (!CanReload() || !CurrentWeapon) return;
 	CurrentWeapon->StopFire();
-	CurrentWeapon->ChangeClip();
 	ReloadAnimInProgress = true;
 	PlayAnimMontage(CurrentReloadAnimMontage);
 }
@@ -196,11 +196,38 @@ void USTUWeaponComponent::NextWeapon()
 {
 	if (!CanEquip()) return;
 
+	ReloadAnimInProgress = false;
 	CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
 	EquipWeapon(CurrentWeaponIndex);
 }
 
 void USTUWeaponComponent::Reload()
 {
-	ChangeClip();
+	ReloadStarting();
+}
+
+bool USTUWeaponComponent::GetWeaponUIData(FWeaponUIData& UIData) const
+{
+	if (CurrentWeapon)
+	{
+		UIData = CurrentWeapon->GetUIData();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool USTUWeaponComponent::GetWeaponAmmoData(FAmmoData& AmmoData) const
+{
+	if (CurrentWeapon)
+	{
+		AmmoData = CurrentWeapon->GetAmmoData();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
