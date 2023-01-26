@@ -147,7 +147,7 @@ void USTUWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent
 
 	ReloadAnimInProgress = false;
 	CurrentWeapon->ChangeClip();
-	CurrentWeapon->LogAmmo();
+	//CurrentWeapon->LogAmmo();
 }
 
 bool USTUWeaponComponent::CanFire() const
