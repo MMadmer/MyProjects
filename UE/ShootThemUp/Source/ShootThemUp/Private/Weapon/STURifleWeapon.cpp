@@ -4,6 +4,19 @@
 #include "Weapon/STURifleWeapon.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "Weapon/Components/STUWeaponFXComponent.h"
+
+ASTURifleWeapon::ASTURifleWeapon()
+{
+	WeaponFXComponent = CreateDefaultSubobject<USTUWeaponFXComponent>("WeaponFXComponent");
+}
+
+void ASTURifleWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+
+	check(WeaponFXComponent);
+}
 
 void ASTURifleWeapon::StartFire()
 {
@@ -44,10 +57,11 @@ void ASTURifleWeapon::MakeShot()
 	{
 		MakeDamage(HitResult);
 
-		DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0.0f, 3.0f);
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
+		//DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0.0f, 3.0f);
+		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
 
-		UE_LOG(LogTemp, Display, TEXT("Bone: %s"), *HitResult.BoneName.ToString());
+		//UE_LOG(LogTemp, Display, TEXT("Bone: %s"), *HitResult.BoneName.ToString());
+		WeaponFXComponent->PlayImpactFX(HitResult);
 	}
 	else
 	{
@@ -75,5 +89,9 @@ void ASTURifleWeapon::MakeDamage(const FHitResult& HitResult)
 	const auto DamagedActor = HitResult.GetActor();
 	if (!DamagedActor) return;
 
-	DamagedActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerController(), this);
+	float DamageResult = DamageAmount;
+
+	if (HitResult.BoneName == "b_head") DamageResult *= 10.0f;
+
+	DamagedActor->TakeDamage(DamageResult, FDamageEvent(), GetPlayerController(), this);
 }
