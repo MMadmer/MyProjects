@@ -177,11 +177,12 @@ float ASTUBaseCharacter::GetMovementDirection() const
 
 void ASTUBaseCharacter::OnDeath()
 {
-	UE_LOG(LogBaseCharacter, Display, TEXT("Player %s is dead"), *GetName());
+	//UE_LOG(LogBaseCharacter, Display, TEXT("Player %s is dead"), *GetName());
 
 	// PlayAnimMontage(DeathAnimMontage);
 
 	GetCharacterMovement()->DisableMovement();
+	HealthTextComponent->SetVisibility(false, true);
 
 	SetLifeSpan(LifeSpanOnDeath);
 
