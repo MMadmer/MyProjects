@@ -8,6 +8,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class USFHealthComponent;
 
 UCLASS()
 class SKYFALLER_API ABaseCharacter : public ACharacter
@@ -24,6 +25,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	USpringArmComponent* SpringArmComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	USFHealthComponent* HealthComponent;
 
 	virtual void BeginPlay() override;
 

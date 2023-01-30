@@ -14,7 +14,8 @@ public class SkyFaller : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[]
 		{
-			"SkyFaller/Player"
+			"SkyFaller/Public/Player",
+			"SkyFaller/Public/Components"
 		});
 
 		// Uncomment if you are using Slate UI

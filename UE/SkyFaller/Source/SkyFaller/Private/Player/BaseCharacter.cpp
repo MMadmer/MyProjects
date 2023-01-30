@@ -4,7 +4,7 @@
 #include "Player/BaseCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "..\..\Public\Player\BaseCharacter.h"
+#include "Components/SFHealthComponent.h"
 
 ABaseCharacter::ABaseCharacter()
 {
@@ -16,12 +16,15 @@ ABaseCharacter::ABaseCharacter()
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	HealthComponent = CreateDefaultSubobject<USFHealthComponent>("HealthComponent");
 }
 
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	check(HealthComponent);
 }
 
 void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
