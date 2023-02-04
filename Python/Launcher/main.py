@@ -17,8 +17,9 @@ class MyApp(QWidget):
         self.LE_PATH_BASE_WIDTH = 300
         self.btnChooseImage = None
         self.BTN_CHOOSE_IMAGE_BASE_WIDTH = 100
-        self.PATH_BLOCK_WIDTH = self.LE_PATH_BASE_WIDTH + self.BTN_CHOOSE_IMAGE_BASE_WIDTH + self.PATH_BLOCK_BASE_DISTANCE
-
+        self.PATH_BLOCK_WIDTH = self.LE_PATH_BASE_WIDTH +\
+                                self.BTN_CHOOSE_IMAGE_BASE_WIDTH +\
+                                self.PATH_BLOCK_BASE_DISTANCE
         # Binary block
         self.leOffset = None
         self.sOffset = None
@@ -36,13 +37,14 @@ class MyApp(QWidget):
         self.btnDownScale = None
         self.btnReset = None
 
-        self.label = None
-        self.imagePath = None
         self.initUI()
 
     def initUI(self):
         self.setWindowTitle('Image redactor')
-        self.setGeometry(700, 300, self.minWindowSize[0], self.minWindowSize[1])
+        self.setGeometry(int(self.screen().size().width() / 2 - self.minWindowSize[0] / 2),
+                         int((self.screen().size().height() / 2 - self.minWindowSize[1] / 2) * 0.8),
+                         self.minWindowSize[0],
+                         self.minWindowSize[1])
         self.setFixedSize(self.minWindowSize[0], self.minWindowSize[1])
 
         # Image block
