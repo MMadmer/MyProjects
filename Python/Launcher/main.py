@@ -1,0 +1,127 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QFileDialog, QLineEdit
+from functools import partial
+import ImageConversation
+
+
+class MyApp(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        # Image block vars
+        self.PATH_BLOCK_Y = 0.05
+        self.PATH_BLOCK_BASE_DISTANCE = 10
+        self.pathBlockSize = None
+        self.lePath = None
+        self.LE_PATH_BASE_WIDTH = 300
+        self.btnChooseImage = None
+        self.BTN_CHOOSE_IMAGE_BASE_WIDTH = 100
+        self.PATH_BLOCK_WIDTH = self.LE_PATH_BASE_WIDTH + self.BTN_CHOOSE_IMAGE_BASE_WIDTH + self.PATH_BLOCK_BASE_DISTANCE
+
+        # Window vars
+        self.minWindowSize = [self.PATH_BLOCK_WIDTH + 20, 150]
+
+        # Buttons
+        self.btnOriginal = None
+        self.btnNegative = None
+        self.btnGray = None
+        self.btnBinary = None
+        self.btnUpScale = None
+        self.btnDownScale = None
+
+        self.label = None
+        self.imagePath = None
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Image redactor')
+        self.setGeometry(700, 300, self.minWindowSize[0], self.minWindowSize[1])
+        self.setFixedSize(self.minWindowSize[0], self.minWindowSize[1])
+
+        # Image block
+        self.btnChooseImage = QPushButton("Browse image", self)
+        self.lePath = QLineEdit(self)
+        self.lePath.setGeometry(int(self.minWindowSize[0] / 2 - self.PATH_BLOCK_WIDTH / 2),
+                                int(self.minWindowSize[1] * self.PATH_BLOCK_Y),
+                                self.LE_PATH_BASE_WIDTH,
+                                25)
+        self.btnChooseImage.clicked.connect(partial(self.onClicked, 0))
+
+        # -----------------
+        # Conversion block
+        # -----------------
+
+        # Original
+        self.btnOriginal = QPushButton("Show original", self)
+        self.btnOriginal.clicked.connect(partial(self.onClicked, 1))
+        self.btnOriginal.move(170, 50)
+
+        # Negative
+        self.btnNegative = QPushButton("Convert to negative", self)
+        self.btnNegative.clicked.connect(partial(self.onClicked, 2))
+        self.btnNegative.move(20, 100)
+
+        # Gray
+        self.btnGray = QPushButton("Convert to gray", self)
+        self.btnGray.clicked.connect(partial(self.onClicked, 3))
+        self.btnGray.move(130, 100)
+
+        # Binary
+        self.btnBinary = QPushButton("Convert to binary", self)
+        self.btnBinary.clicked.connect(partial(self.onClicked, 4))
+        self.btnBinary.move(220, 100)
+        # -----------------
+
+    def onClicked(self, index):
+        imagePath = self.lePath.text()
+
+        btnFinder = {
+            0: self.onBrowseClick,
+            1: ImageConversation.showOriginal,
+            2: ImageConversation.toNegative,
+            3: ImageConversation.toGray,
+            4: ImageConversation.toBinary
+        }
+
+        if index == 0:
+            func = btnFinder.get(index)
+            func()
+        elif imagePath:
+            func = btnFinder.get(index)
+            func(imagePath)
+        else:
+            pass
+
+    def onBrowseClick(self):
+        options = QFileDialog.Options()
+        imagePath, _ = QFileDialog.getOpenFileName(self, "Browse image", "",
+                                                   "Image files (*.png *.jpeg *.jpg)",
+                                                   options=options)
+        if imagePath:
+            self.lePath.setText(f"{imagePath}")
+
+    def resizeEvent(self, event):
+        new_width = event.size().width()
+        new_height = event.size().height()
+
+        if new_width < self.minWindowSize[0]:
+            self.resize(self.minWindowSize[0], new_height)
+            new_width = self.minWindowSize[0]
+        if new_height < self.minWindowSize[1]:
+            self.resize(new_width, self.minWindowSize[1])
+            new_height = self.minWindowSize[1]
+
+        new_pathBlockX = int(new_width / 2 - self.PATH_BLOCK_WIDTH / 2)
+        new_pathBlockY = int(new_height * self.PATH_BLOCK_Y)
+        self.lePath.move(new_pathBlockX, new_pathBlockY)
+        self.btnChooseImage.move(int(new_pathBlockX + self.lePath.width() + self.PATH_BLOCK_BASE_DISTANCE),
+                                 new_pathBlockY)
+
+        QWidget.resizeEvent(self, event)
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = MyApp()
+    window.show()
+    sys.exit(app.exec_())
