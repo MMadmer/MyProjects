@@ -5,6 +5,20 @@ from functools import partial
 import ImageConversation
 
 
+def tryConvert(downBorder, upBorder, le, s):
+    try:
+        value = int(le.text())
+        if value < downBorder or value > upBorder:
+            value = 0
+            le.setText('0')
+            s.setValue(0)
+        return value
+    except:
+        le.setText('0')
+        s.setValue(0)
+        return 0
+
+
 class MyApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -17,8 +31,8 @@ class MyApp(QWidget):
         self.LE_PATH_BASE_WIDTH = 300
         self.btnChooseImage = None
         self.BTN_CHOOSE_IMAGE_BASE_WIDTH = 100
-        self.PATH_BLOCK_WIDTH = self.LE_PATH_BASE_WIDTH +\
-                                self.BTN_CHOOSE_IMAGE_BASE_WIDTH +\
+        self.PATH_BLOCK_WIDTH = self.LE_PATH_BASE_WIDTH + \
+                                self.BTN_CHOOSE_IMAGE_BASE_WIDTH + \
                                 self.PATH_BLOCK_BASE_DISTANCE
         # Binary block
         self.leOffset = None
@@ -93,7 +107,10 @@ class MyApp(QWidget):
         self.sOffset.move(self.btnBinary.x() + self.btnBinary.width() + 5, self.btnBinary.y())
 
         self.leOffset = QLineEdit('0', self)
-        self.leOffset.returnPressed.connect(lambda: self.sOffset.setValue(self.tryConvert()))
+        self.leOffset.returnPressed.connect(lambda: self.sOffset.setValue(tryConvert(-128,
+                                                                                     128,
+                                                                                     self.leOffset,
+                                                                                     self.sOffset)))
         self.leOffset.resize(30, 20)
         self.leOffset.move(int(self.sOffset.x() + self.sOffset.width() / 2 - 5), self.sOffset.y() + 22)
 
@@ -104,7 +121,7 @@ class MyApp(QWidget):
 
     def onClicked(self, index):
         imagePath = self.lePath.text()
-        offset = self.tryConvert()
+        offset = tryConvert(-128, 128, self.leOffset, self.sOffset)
 
         btnFinder = {
             0: self.onBrowseClick,
@@ -135,19 +152,6 @@ class MyApp(QWidget):
                                                    options=options)
         if imagePath:
             self.lePath.setText(f"{imagePath}")
-
-    def tryConvert(self):
-        try:
-            value = int(self.leOffset.text())
-            if value < -128 or value > 128:
-                value = 0
-                self.leOffset.setText('0')
-                self.sOffset.setValue(0)
-            return value
-        except:
-            self.leOffset.setText('0')
-            self.sOffset.setValue(0)
-            return 0
 
     def reset(self):
         self.leOffset.setText('0')
