@@ -77,7 +77,11 @@ def toGray(imgPath):
         result_image.show()
 
 
-def toBinary(imgPath):
+def toBinary(imgPath, offset):
+    #try:
+    #    offset = int(offset)
+    #except:
+    #    return
     root = tk.Tk()
     root.title("Changing image")
 
@@ -96,7 +100,7 @@ def toBinary(imgPath):
         for j in range(height):
             r, g, b = img.getpixel((i, j))
             avg = (r + g + b) / 3
-            if int(avg) < 128:
+            if int(avg) < 128 + offset:
                 avg = 0
             else:
                 avg = 255
@@ -110,4 +114,3 @@ def toBinary(imgPath):
 
     result_image = changed_img
     result_image.show()
-

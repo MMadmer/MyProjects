@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QFileDialog, QLineEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QFileDialog, QLineEdit, QLabel, QSlider
+from PyQt5.QtCore import Qt
 from functools import partial
 import ImageConversation
 
@@ -18,8 +19,13 @@ class MyApp(QWidget):
         self.BTN_CHOOSE_IMAGE_BASE_WIDTH = 100
         self.PATH_BLOCK_WIDTH = self.LE_PATH_BASE_WIDTH + self.BTN_CHOOSE_IMAGE_BASE_WIDTH + self.PATH_BLOCK_BASE_DISTANCE
 
+        # Binary block
+        self.leOffset = None
+        self.sOffset = None
+        self.lOffset = None
+
         # Window vars
-        self.minWindowSize = [self.PATH_BLOCK_WIDTH + 20, 150]
+        self.minWindowSize = [self.PATH_BLOCK_WIDTH + 20, 160]
 
         # Buttons
         self.btnOriginal = None
@@ -28,6 +34,7 @@ class MyApp(QWidget):
         self.btnBinary = None
         self.btnUpScale = None
         self.btnDownScale = None
+        self.btnReset = None
 
         self.label = None
         self.imagePath = None
@@ -66,29 +73,56 @@ class MyApp(QWidget):
         self.btnGray.clicked.connect(partial(self.onClicked, 3))
         self.btnGray.move(130, 100)
 
-        # Binary
+        # -----------------
+        # Binary block
+        # -----------------
         self.btnBinary = QPushButton("Convert to binary", self)
         self.btnBinary.clicked.connect(partial(self.onClicked, 4))
         self.btnBinary.move(220, 100)
+
+        self.btnReset = QPushButton("Reset", self)
+        self.btnReset.clicked.connect(self.reset)
+        self.btnReset.move(int(self.btnBinary.x() + 8),
+                           self.btnBinary.y() + self.btnBinary.height() - 5)
+
+        self.sOffset = QSlider(Qt.Horizontal, self)
+        self.sOffset.setRange(-128, 128)
+        self.sOffset.valueChanged.connect(lambda value: self.leOffset.setText(str(value)))
+        self.sOffset.move(self.btnBinary.x() + self.btnBinary.width() + 5, self.btnBinary.y())
+
+        self.leOffset = QLineEdit('0', self)
+        self.leOffset.returnPressed.connect(lambda: self.sOffset.setValue(self.tryConvert()))
+        self.leOffset.resize(30, 20)
+        self.leOffset.move(int(self.sOffset.x() + self.sOffset.width() / 2 - 5), self.sOffset.y() + 22)
+
+        self.lOffset = QLabel("Offset", self)
+        self.lOffset.move(self.leOffset.x() - 35, self.leOffset.y() + 3)
+        # -----------------
         # -----------------
 
     def onClicked(self, index):
         imagePath = self.lePath.text()
+        offset = self.tryConvert()
 
         btnFinder = {
             0: self.onBrowseClick,
             1: ImageConversation.showOriginal,
             2: ImageConversation.toNegative,
             3: ImageConversation.toGray,
-            4: ImageConversation.toBinary
+            4: ImageConversation.toBinary,
+            5: self.reset
         }
 
-        if index == 0:
+        if index == 0 or index == 5:
             func = btnFinder.get(index)
             func()
         elif imagePath:
-            func = btnFinder.get(index)
-            func(imagePath)
+            if index == 4:
+                func = btnFinder.get(index)
+                func(imagePath, offset)
+            else:
+                func = btnFinder.get(index)
+                func(imagePath)
         else:
             pass
 
@@ -99,6 +133,23 @@ class MyApp(QWidget):
                                                    options=options)
         if imagePath:
             self.lePath.setText(f"{imagePath}")
+
+    def tryConvert(self):
+        try:
+            value = int(self.leOffset.text())
+            if value < -128 or value > 128:
+                value = 0
+                self.leOffset.setText('0')
+                self.sOffset.setValue(0)
+            return value
+        except:
+            self.leOffset.setText('0')
+            self.sOffset.setValue(0)
+            return 0
+
+    def reset(self):
+        self.leOffset.setText('0')
+        self.sOffset.setValue(0)
 
     def resizeEvent(self, event):
         new_width = event.size().width()
