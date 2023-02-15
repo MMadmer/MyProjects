@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QFileDialog, QLineEdit, QLabel, QSlider
+from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QFileDialog,
+                             QLineEdit, QLabel, QSlider)
 from PyQt5.QtCore import Qt
 from functools import partial
 import ImageConversation
@@ -13,7 +14,7 @@ def tryConvert(downBorder, upBorder, le, s):
             le.setText('0')
             s.setValue(0)
         return value
-    except:
+    except ValueError:
         le.setText('0')
         s.setValue(0)
         return 0
