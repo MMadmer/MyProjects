@@ -14,12 +14,20 @@ def main():
     folders = range(0, 12, 2)
     selection_folder_prefix = "Selection_proc"
     progress = 0
+    selection_duration = 2500
+    step = 100
 
     root = tk.Tk()
     root.title("Selection creating")
 
     progressbar = ttk.Progressbar(root, length=300, mode="determinate")
     progressbar.pack()
+
+    # Progress start
+    print("{:.2f}".format(progress), "%")
+
+    update_progressbar(progressbar, progress)
+    root.update()
 
     for folder in folders:
         folder_name = f"proc_{folder}"
@@ -51,6 +59,9 @@ def main():
         if not os.path.exists(selection_folder_name):
             os.makedirs(selection_folder_name)
 
+        if not os.path.exists(f"Selection_Seeds_Images/proc_{folder}"):
+            os.makedirs(f"Selection_Seeds_Images/proc_{folder}")
+
         # Split raw selection into pol sig
         for i in range(1, num_files + 1):
             file_path = os.path.join(folder_name, f"{i}.txt")
@@ -80,10 +91,11 @@ def main():
                             continue
 
             # Split pol sig into selection
-            for j in range(1, math.ceil(len(V) / 2500)):
+            for j in range(1, math.ceil((len(V) - selection_duration + step) / step)):
                 selection_V = []
-                current_max = j * 2500
-                for k in range((j - 1) * 2500, current_max):
+                current_min = j * step - step
+                current_max = current_min + selection_duration
+                for k in range(current_min, current_max):
                     selection_V.append(V[k])
 
                 # Creating selection files
