@@ -14,7 +14,7 @@ def main():
     folders = range(0, 12, 2)
     selection_folder_prefix = "Selection_proc"
     progress = 0
-    selection_duration = 2500
+    selection_duration = 5000
     step = 100
 
     root = tk.Tk()
@@ -30,7 +30,9 @@ def main():
     root.update()
 
     for folder in folders:
+        total_files_in_folder = 0
         folder_name = f"proc_{folder}"
+
         if not os.path.exists(folder_name):
             print(f"The folder {folder_name} does not exist.")
             continue
@@ -59,8 +61,8 @@ def main():
         if not os.path.exists(selection_folder_name):
             os.makedirs(selection_folder_name)
 
-        if not os.path.exists(f"Selection_Seeds_Images/proc_{folder}"):
-            os.makedirs(f"Selection_Seeds_Images/proc_{folder}")
+        # if not os.path.exists(f"Selection_Seeds_Images/proc_{folder}"):
+        #     os.makedirs(f"Selection_Seeds_Images/proc_{folder}")
 
         # Split raw selection into pol sig
         for i in range(1, num_files + 1):
@@ -92,6 +94,7 @@ def main():
 
             # Split pol sig into selection
             for j in range(1, math.ceil((len(V) - selection_duration + step) / step)):
+                total_files_in_folder += 1
                 selection_V = []
                 current_min = j * step - step
                 current_max = current_min + selection_duration
@@ -99,19 +102,19 @@ def main():
                     selection_V.append(V[k])
 
                 # Creating selection files
-                selection_file_path = os.path.join(selection_folder_name, f"{i}_{j}.txt")
+                selection_file_path = os.path.join(selection_folder_name, f"{total_files_in_folder}.txt")
                 with open(selection_file_path, "w") as selection_file:
                     for num in selection_V:
                         selection_file.write(str(num) + "\n")
 
-                fig, ax = plt.subplots(figsize=(19.2, 12), dpi=100)
-                ax.plot(selection_V)
-                ax.set_ylabel("V")
-                # ax.set_xlabel("t")
-                fig.subplots_adjust(left=0.02, bottom=0.02, right=1.0, top=1.0)
-                # plt.show()
-                plt.savefig(f"Selection_Seeds_Images/proc_{folder}/{i}_{j}.png", dpi=100)
-                plt.close()
+                # fig, ax = plt.subplots(figsize=(19.2, 12), dpi=100)
+                # ax.plot(selection_V)
+                # ax.set_ylabel("V")
+                # # ax.set_xlabel("t")
+                # fig.subplots_adjust(left=0.02, bottom=0.02, right=1.0, top=1.0)
+                # # plt.show()
+                # plt.savefig(f"Selection_Seeds_Images/proc_{folder}/{total_files_in_folder}.png", dpi=100)
+                # plt.close()
 
             # Progress
             progress += 1 / (num_files * len(folders)) * 100

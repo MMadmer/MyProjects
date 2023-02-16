@@ -92,7 +92,7 @@ b2 = (b2 - 0.5) * 2 * np.sqrt(1 / H_DIM)
 # ---------------------------------
 
 ALPHA = 0.0002
-NUM_EPOCHS = 15000
+NUM_EPOCHS = 2500
 BATCH_SIZE = 50
 
 loss_arr = []
