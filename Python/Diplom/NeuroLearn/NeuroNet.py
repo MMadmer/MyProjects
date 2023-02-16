@@ -3,6 +3,8 @@ import numpy as np
 from sklearn import datasets
 import matplotlib.pyplot as plt
 import os
+import tkinter as tk
+from tkinter import ttk
 
 
 def relu(t):
@@ -63,27 +65,63 @@ def calc_accuracy():
     return acc
 
 
+def convert_category(var):
+    if var == 0:
+        var = 0
+    elif var == 10:
+        var = 1
+    elif var == 2:
+        var = 2
+    elif var == 4:
+        var = 3
+    elif var == 6:
+        var = 4
+    elif var == 8:
+        var = 5
+    return var
+
+
+def update_progressbar(progress_bar, value):
+    progress_bar["value"] = value
+
+
 # ----------------Main------------------
-INPUT_DIM = 4
-OUT_DIM = 3
+INPUT_DIM = 5000
+OUT_DIM = 6
 H_DIM = 15
+
+x = np.random.randn(1, INPUT_DIM)
+y = random.randint(0, OUT_DIM - 1)
 
 print("Loading training sample...")
 # iris = datasets.load_iris()
 # dataset = [(iris.data[i][None, ...], iris.target[i]) for i in range(len(iris.target))]
-data_dir = "/path/to/data/directory"
-data_files = os.listdir(data_dir)
-dataset = []
-for data_file in data_files:
-    data = np.loadtxt(os.path.join(data_dir, data_file), delimiter=",")
-    for i in range(len(data)):
-        x = data[i, :-1][None, ...]
-        y = int(data[i, -1])
-        dataset.append((x, y))
-print("Done")
+base_dir = os.path.abspath('./Plot_of_Seed/Seeds')
 
-x = np.random.randn(1, INPUT_DIM)
-y = random.randint(0, OUT_DIM - 1)
+dataset = []
+for directory in os.listdir(base_dir):
+    full_path = os.path.join(base_dir, directory)
+    if not os.path.isdir(full_path) or not directory.startswith('Selection_proc_'):
+        continue
+    print(directory)
+
+    category = int(directory[len('Selection_proc_'):])
+    category = convert_category(category)
+
+    for i in range(1, 7000):
+        if not os.path.exists(f"{full_path}/{i}.txt"):
+            continue
+
+        with open(os.path.join(full_path, f"{i}.txt")) as f:
+            data = [float(line.strip()) for line in f]
+
+        # Add the data to the dataset, with the category label
+        dataset.append((np.array([data]), category))
+
+        print(f"{full_path}/{i}.txt")
+
+print("Done")
+# print(dataset)
 
 # ---------------------------------
 # ------------Layers---------------
@@ -106,6 +144,14 @@ NUM_EPOCHS = 2500
 BATCH_SIZE = 50
 
 loss_arr = []
+
+progress = 0
+
+root = tk.Tk()
+root.title("Selection creating")
+
+progressbar = ttk.Progressbar(root, length=300, mode="determinate")
+progressbar.pack()
 
 for ep in range(NUM_EPOCHS):
     random.shuffle(dataset)
@@ -140,24 +186,29 @@ for ep in range(NUM_EPOCHS):
 
         loss_arr.append(E)
 
-    print("Progress: ", round(ep / NUM_EPOCHS * 100, 2), '%')
+    # Progress
+    progress = ep / NUM_EPOCHS * 100
+    print("{:.2f}".format(progress), "%")
 
-accuracy = calc_accuracy()
+    update_progressbar(progressbar, progress)
+    root.update()
+
+# accuracy = calc_accuracy()
 print("W1: ", W1)
 print("b1: ", b1)
 print("W2: ", W2)
 print("b2: ", b2)
-print()
-print("Accuracy: ", accuracy, '%')
-
-# Input
-x = np.array([7.9, 3.1, 7.5, 1.8])
-
-# Using calibrated NN
-class_names = ['Setosa', 'Versicolor', 'Virginica']
-probs = predict(x)
-pred_class = np.argmax(probs)
-print('Predicted class:', class_names[pred_class])
-
-plt.plot(loss_arr)
-plt.show()
+# print()
+# print("Accuracy: ", accuracy, '%')
+#
+# # Input
+# x = np.array([7.9, 3.1, 7.5, 1.8])
+#
+# # Using calibrated NN
+# class_names = ['Setosa', 'Versicolor', 'Virginica']
+# probs = predict(x)
+# pred_class = np.argmax(probs)
+# print('Predicted class:', class_names[pred_class])
+#
+# plt.plot(loss_arr)
+# plt.show()
