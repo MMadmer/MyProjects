@@ -193,13 +193,13 @@ for ep in range(NUM_EPOCHS):
     update_progressbar(progressbar, progress)
     root.update()
 
-# accuracy = calc_accuracy()
+accuracy = calc_accuracy()
 print("W1: ", W1)
 print("b1: ", b1)
 print("W2: ", W2)
 print("b2: ", b2)
-# print()
-# print("Accuracy: ", accuracy, '%')
+print()
+print("Accuracy: ", accuracy, '%')
 #
 # # Input
 # x = np.array([7.9, 3.1, 7.5, 1.8])
