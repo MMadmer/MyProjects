@@ -125,7 +125,7 @@ for directory in os.listdir(base_dir):
     category = int(directory[len('Selection_proc_'):])
     category = int(category / 2)
 
-    for i in range(1, 7000):
+    for i in range(2, 7000):
         if not os.path.exists(f"{full_path}/{i}.txt"):
             continue
 
@@ -157,7 +157,7 @@ b2 = (b2 - 0.5) * 2 * np.sqrt(1 / H_DIM)
 # ---------------------------------
 
 ALPHA = 0.0002
-NUM_EPOCHS = 2500
+NUM_EPOCHS = 5000
 BATCH_SIZE = 50
 
 loss_arr = []
@@ -209,6 +209,7 @@ for ep in range(NUM_EPOCHS):
 
     update_progressbar(progressbar, progress)
     root.update()
+root.destroy()
 
 accuracy = calc_accuracy()
 print("W1: ", W1)
