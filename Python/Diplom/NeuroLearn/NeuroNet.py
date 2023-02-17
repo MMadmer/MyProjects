@@ -1,6 +1,5 @@
 import random
 import numpy as np
-from sklearn import datasets
 import matplotlib.pyplot as plt
 import os
 import tkinter as tk
@@ -65,22 +64,6 @@ def calc_accuracy():
     return acc
 
 
-def convert_category(var):
-    if var == 0:
-        var = 0
-    elif var == 10:
-        var = 1
-    elif var == 2:
-        var = 2
-    elif var == 4:
-        var = 3
-    elif var == 6:
-        var = 4
-    elif var == 8:
-        var = 5
-    return var
-
-
 def category_converter(val):
     if val == 0:
         pass
@@ -111,11 +94,10 @@ x = np.random.randn(1, INPUT_DIM)
 y = random.randint(0, OUT_DIM - 1)
 
 print("Loading training sample...")
-# iris = datasets.load_iris()
-# dataset = [(iris.data[i][None, ...], iris.target[i]) for i in range(len(iris.target))]
 base_dir = os.path.abspath('./Plot_of_Seed/Seeds')
-
+retrieved_files = 150 + 1
 dataset = []
+
 for directory in os.listdir(base_dir):
     full_path = os.path.join(base_dir, directory)
     if not os.path.isdir(full_path) or not directory.startswith('Selection_proc_'):
@@ -124,8 +106,9 @@ for directory in os.listdir(base_dir):
 
     category = int(directory[len('Selection_proc_'):])
     category = int(category / 2)
+    # category = category_converter(category)
 
-    for i in range(2, 7000):
+    for i in range(retrieved_files, 7000):
         if not os.path.exists(f"{full_path}/{i}.txt"):
             continue
 
@@ -157,7 +140,7 @@ b2 = (b2 - 0.5) * 2 * np.sqrt(1 / H_DIM)
 # ---------------------------------
 
 ALPHA = 0.0002
-NUM_EPOCHS = 5000
+NUM_EPOCHS = 2500
 BATCH_SIZE = 50
 
 loss_arr = []
@@ -216,28 +199,52 @@ print("W1: ", W1)
 print("b1: ", b1)
 print("W2: ", W2)
 print("b2: ", b2)
-print()
-print("Accuracy: ", accuracy * 100, '%')
 
+real_accuracy = []
 # Input
-full_path = os.path.abspath('./Plot_of_Seed/Seeds/Selection_proc_2')
+for directory in os.listdir(base_dir):
+    acc = 0
+    full_path = os.path.join(base_dir, directory)
+    if not os.path.isdir(full_path) or not directory.startswith('Selection_proc_'):
+        continue
+    print(directory)
 
-if not os.path.exists(f"{full_path}/1.txt"):
-    print("Doesn't exist")
+    category = int(directory[len('Selection_proc_'):])
+    category = int(category / 2)
 
-with open(os.path.join(full_path, f"1.txt")) as f:
-    data = [float(line.strip()) for line in f]
+    for i in range(1, retrieved_files):
+        if not os.path.exists(f"{full_path}/{i}.txt"):
+            print(f"{full_path}/{i}.txt not exist")
+            continue
 
-# Add the data to the dataset, with the category label
-x = np.array([data])
+        with open(os.path.join(full_path, f"{i}.txt")) as f:
+            data = [float(line.strip()) for line in f]
 
-print(f"{full_path}/1.txt")
+        print(f"{full_path}/{i}.txt")
 
-# Using calibrated NN
-class_names = ['0%', '10%', '2%', '4%', '6%', '8%']
-probs = predict(x)
-pred_class = np.argmax(probs)
-print('Predicted class:', class_names[pred_class])
+        # Add the data to the dataset, with the category label
+        x = np.array([data])
+
+        # Using calibrated NN
+        class_names = ['0%', '2%', '4%', '6%', '8%', '10%']
+        probs = predict(x)
+        pred_class = np.argmax(probs)
+        print('Predicted class:', class_names[pred_class])
+        if category == pred_class:
+            acc += 1
+
+    real_accuracy.append(acc / (retrieved_files - 1) * 100)
+
+print()
+print("Training accuracy: " + "{:.2f}".format(accuracy * 100), '%')
+
+print("Real accuracy")
+print(f"0%: " + "{:.2f}".format(real_accuracy[0]), '%')
+print(f"2%: " + "{:.2f}".format(real_accuracy[1]), '%')
+print(f"4%: " + "{:.2f}".format(real_accuracy[2]), '%')
+print(f"6%: " + "{:.2f}".format(real_accuracy[3]), '%')
+print(f"8%: " + "{:.2f}".format(real_accuracy[4]), '%')
+print(f"10%: " + "{:.2f}".format(real_accuracy[5]), '%')
 
 plt.plot(loss_arr)
 plt.show()
