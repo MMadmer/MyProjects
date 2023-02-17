@@ -138,7 +138,7 @@ print("b1: ", b1)
 print("W2: ", W2)
 print("b2: ", b2)
 print()
-print("Accuracy: ", accuracy, '%')
+print("Accuracy: ", accuracy * 100, '%')
 
 # Input
 x = np.array([7.9, 3.1, 7.5, 1.8])

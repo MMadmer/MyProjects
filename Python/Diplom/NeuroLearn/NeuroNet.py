@@ -81,6 +81,23 @@ def convert_category(var):
     return var
 
 
+def category_converter(val):
+    if val == 0:
+        pass
+    elif val == 10:
+        val = 1
+    elif val == 2:
+        val = 2
+    elif val == 4:
+        val = 3
+    elif val == 6:
+        val = 4
+    elif val == 8:
+        val = 5
+
+    return val
+
+
 def update_progressbar(progress_bar, value):
     progress_bar["value"] = value
 
@@ -106,7 +123,7 @@ for directory in os.listdir(base_dir):
     print(directory)
 
     category = int(directory[len('Selection_proc_'):])
-    category = convert_category(category)
+    category = int(category / 2)
 
     for i in range(1, 7000):
         if not os.path.exists(f"{full_path}/{i}.txt"):
@@ -199,16 +216,27 @@ print("b1: ", b1)
 print("W2: ", W2)
 print("b2: ", b2)
 print()
-print("Accuracy: ", accuracy, '%')
-#
-# # Input
-# x = np.array([7.9, 3.1, 7.5, 1.8])
-#
-# # Using calibrated NN
-# class_names = ['Setosa', 'Versicolor', 'Virginica']
-# probs = predict(x)
-# pred_class = np.argmax(probs)
-# print('Predicted class:', class_names[pred_class])
-#
-# plt.plot(loss_arr)
-# plt.show()
+print("Accuracy: ", accuracy * 100, '%')
+
+# Input
+full_path = os.path.abspath('./Plot_of_Seed/Seeds/Selection_proc_2')
+
+if not os.path.exists(f"{full_path}/1.txt"):
+    print("Doesn't exist")
+
+with open(os.path.join(full_path, f"1.txt")) as f:
+    data = [float(line.strip()) for line in f]
+
+# Add the data to the dataset, with the category label
+x = np.array([data])
+
+print(f"{full_path}/1.txt")
+
+# Using calibrated NN
+class_names = ['0%', '10%', '2%', '4%', '6%', '8%']
+probs = predict(x)
+pred_class = np.argmax(probs)
+print('Predicted class:', class_names[pred_class])
+
+plt.plot(loss_arr)
+plt.show()

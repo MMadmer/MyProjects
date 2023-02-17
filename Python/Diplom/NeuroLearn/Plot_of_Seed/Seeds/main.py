@@ -1,22 +1,22 @@
 import matplotlib.pyplot as plt
 import os
 
-file = f"proc_10"
-files = 20
+file = f"proc_4"
+files = 0
 t = []
 V = []
 progress = 0
-#folder = -2
+# folder = -2
 
-#while (folder < 10):
-    #folder += 2
-    #file = f"proc_{folder}"
+# while (folder < 10):
+# folder += 2
+# file = f"proc_{folder}"
 
 if not os.path.exists(file):
     print(f"The folder {file} does not exist.")
 else:
-    for i in range(1, files + 1):
-        file_path = f'{file}\{i}.txt'
+    for i in range(0, files + 1):
+        file_path = f'{file}/{i}.txt'
         if not os.path.exists(file_path):
             print(f"The file {file_path} does not exist.")
         else:
