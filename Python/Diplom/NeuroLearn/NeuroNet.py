@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import os
 import tkinter as tk
 from tkinter import ttk
+import time
+import datetime
 
 
 def relu(t):
@@ -88,7 +90,7 @@ def update_progressbar(progress_bar, value):
 # ----------------Main------------------
 INPUT_DIM = 5000
 OUT_DIM = 6
-H_DIM = 15
+H_DIM = 128
 
 x = np.random.randn(1, INPUT_DIM)
 y = random.randint(0, OUT_DIM - 1)
@@ -139,9 +141,9 @@ W2 = (W2 - 0.5) * 2 * np.sqrt(1 / H_DIM)
 b2 = (b2 - 0.5) * 2 * np.sqrt(1 / H_DIM)
 # ---------------------------------
 
-ALPHA = 0.0002
-NUM_EPOCHS = 2500
-BATCH_SIZE = 50
+ALPHA = 0.001
+NUM_EPOCHS = 100
+BATCH_SIZE = 16
 
 loss_arr = []
 
@@ -154,6 +156,7 @@ progressbar = ttk.Progressbar(root, length=300, mode="determinate")
 progressbar.pack()
 
 for ep in range(NUM_EPOCHS):
+    start_time = time.time()
     random.shuffle(dataset)
     for i in range(len(dataset) // BATCH_SIZE):
         batch_x, batch_y = zip(*dataset[i * BATCH_SIZE: i * BATCH_SIZE + BATCH_SIZE])
@@ -192,9 +195,23 @@ for ep in range(NUM_EPOCHS):
 
     update_progressbar(progressbar, progress)
     root.update()
+
+    # Time
+    end_time = time.time()
+    time_diff = end_time - start_time
+
+    current_time = time_diff * ep
+    max_time = time_diff * NUM_EPOCHS
+    diff_time = max_time - current_time
+
+    remaining_time = datetime.timedelta(seconds=diff_time)
+    remaining_time_str = str(remaining_time - datetime.timedelta(microseconds=remaining_time.microseconds)).split(':')[-3:]
+    print("Time remaining: " + ':'.join(remaining_time_str))
+
 root.destroy()
 
 accuracy = calc_accuracy()
+
 print("W1: ", W1)
 print("b1: ", b1)
 print("W2: ", W2)
@@ -236,15 +253,16 @@ for directory in os.listdir(base_dir):
     real_accuracy.append(acc / (retrieved_files - 1) * 100)
 
 print()
-print("Training accuracy: " + "{:.2f}".format(accuracy * 100), '%')
+print("Training average accuracy: " + "{:.2f}".format(accuracy * 100), '%')
 
 print("Real accuracy")
 print(f"0%: " + "{:.2f}".format(real_accuracy[0]), '%')
-print(f"2%: " + "{:.2f}".format(real_accuracy[1]), '%')
-print(f"4%: " + "{:.2f}".format(real_accuracy[2]), '%')
-print(f"6%: " + "{:.2f}".format(real_accuracy[3]), '%')
-print(f"8%: " + "{:.2f}".format(real_accuracy[4]), '%')
-print(f"10%: " + "{:.2f}".format(real_accuracy[5]), '%')
+print(f"2%: " + "{:.2f}".format(real_accuracy[2]), '%')
+print(f"4%: " + "{:.2f}".format(real_accuracy[3]), '%')
+print(f"6%: " + "{:.2f}".format(real_accuracy[4]), '%')
+print(f"8%: " + "{:.2f}".format(real_accuracy[5]), '%')
+print(f"10%: " + "{:.2f}".format(real_accuracy[1]), '%')
+print(f"Average real accuracy: " + "{:.2f}".format(sum(real_accuracy) / len(real_accuracy)), '%')
 
 plt.plot(loss_arr)
 plt.show()
