@@ -34,7 +34,11 @@ def predict(x):
     t1 = x @ W1 + b1
     h1 = relu(t1)
     t2 = h1 @ W2 + b2
-    z = softmax(t2)
+    h2 = relu(t2)
+    t3 = h2 @ W3 + b3
+    h3 = relu(t3)
+    t4 = h3 @ W4 + b4
+    z = softmax(t4)
     return z
 
 
@@ -90,7 +94,9 @@ def update_progressbar(progress_bar, value):
 # ----------------Main------------------
 INPUT_DIM = 5000
 OUT_DIM = 6
-H_DIM = 128
+H_DIM_1 = 32
+H_DIM_2 = 64
+H_DIM_3 = 128
 
 x = np.random.randn(1, INPUT_DIM)
 y = random.randint(0, OUT_DIM - 1)
@@ -128,21 +134,33 @@ print("Done")
 # ---------------------------------
 # ------------Layers---------------
 # ---------------------------------
-W1 = np.random.randn(INPUT_DIM, H_DIM)
-b1 = np.random.randn(1, H_DIM)
+W1 = np.random.randn(INPUT_DIM, H_DIM_1)
+b1 = np.random.randn(1, H_DIM_1)
 
-W2 = np.random.randn(H_DIM, OUT_DIM)
-b2 = np.random.randn(1, OUT_DIM)
+W2 = np.random.randn(H_DIM_1, H_DIM_2)
+b2 = np.random.randn(1, H_DIM_2)
+
+W3 = np.random.randn(H_DIM_2, H_DIM_3)
+b3 = np.random.randn(1, H_DIM_3)
+
+W4 = np.random.randn(H_DIM_3, OUT_DIM)
+b4 = np.random.randn(1, OUT_DIM)
 
 W1 = (W1 - 0.5) * 2 * np.sqrt(1 / INPUT_DIM)
 b1 = (b1 - 0.5) * 2 * np.sqrt(1 / INPUT_DIM)
 
-W2 = (W2 - 0.5) * 2 * np.sqrt(1 / H_DIM)
-b2 = (b2 - 0.5) * 2 * np.sqrt(1 / H_DIM)
+W2 = (W2 - 0.5) * 2 * np.sqrt(1 / H_DIM_1)
+b2 = (b2 - 0.5) * 2 * np.sqrt(1 / H_DIM_1)
+
+W3 = (W3 - 0.5) * 2 * np.sqrt(1 / H_DIM_2)
+b3 = (b3 - 0.5) * 2 * np.sqrt(1 / H_DIM_2)
+
+W4 = (W4 - 0.5) * 2 * np.sqrt(1 / H_DIM_3)
+b4 = (b4 - 0.5) * 2 * np.sqrt(1 / H_DIM_3)
 # ---------------------------------
 
 ALPHA = 0.001
-NUM_EPOCHS = 100
+NUM_EPOCHS = 250
 BATCH_SIZE = 16
 
 loss_arr = []
@@ -168,12 +186,24 @@ for ep in range(NUM_EPOCHS):
         t1 = x @ W1 + b1
         h1 = relu(t1)
         t2 = h1 @ W2 + b2
-        z = softmax_batch(t2)
+        h2 = relu(t2)
+        t3 = h2 @ W3 + b3
+        h3 = relu(t3)
+        t4 = h3 @ W4 + b4
+        z = softmax_batch(t4)
         E = np.sum(sparse_cross_entropy_batch(z, y))
 
         # Backward
         y_full = to_full_batch(y, OUT_DIM)
-        dE_dt2 = z - y_full
+        dE_dt4 = z - y_full
+        dE_dW4 = h3.T @ dE_dt4
+        dE_db4 = np.sum(dE_dt4, axis=0, keepdims=True)
+        dE_dh3 = dE_dt4 @ W4.T
+        dE_dt3 = dE_dh3 * relu_dervi(t3)
+        dE_dW3 = h2.T @ dE_dt3
+        dE_db3 = np.sum(dE_dt3, axis=0, keepdims=True)
+        dE_dh2 = dE_dt3 @ W3.T
+        dE_dt2 = dE_dh2 * relu_dervi(t2)
         dE_dW2 = h1.T @ dE_dt2
         dE_db2 = np.sum(dE_dt2, axis=0, keepdims=True)
         dE_dh1 = dE_dt2 @ W2.T
@@ -182,10 +212,14 @@ for ep in range(NUM_EPOCHS):
         dE_db1 = np.sum(dE_dt1, axis=0, keepdims=True)
 
         # Update
-        W1 = W1 - ALPHA * dE_dW1
-        b1 = b1 - ALPHA * dE_db1
-        W2 = W2 - ALPHA * dE_dW2
-        b2 = b2 - ALPHA * dE_db2
+        W1 -= ALPHA * dE_dW1
+        b1 -= ALPHA * dE_db1
+        W2 -= ALPHA * dE_dW2
+        b2 -= ALPHA * dE_db2
+        W3 -= ALPHA * dE_dW3
+        b3 -= ALPHA * dE_db3
+        W4 -= ALPHA * dE_dW4
+        b4 -= ALPHA * dE_db4
 
         loss_arr.append(E)
 
@@ -210,14 +244,21 @@ for ep in range(NUM_EPOCHS):
 
 root.destroy()
 
+print("Calculating training accuracy...")
 accuracy = calc_accuracy()
+print("Done")
 
 print("W1: ", W1)
 print("b1: ", b1)
 print("W2: ", W2)
 print("b2: ", b2)
+print("W3: ", W3)
+print("b3: ", b3)
+print("W4: ", W4)
+print("b4: ", b4)
 
 real_accuracy = []
+
 # Input
 for directory in os.listdir(base_dir):
     acc = 0
@@ -246,7 +287,7 @@ for directory in os.listdir(base_dir):
         class_names = ['0%', '2%', '4%', '6%', '8%', '10%']
         probs = predict(x)
         pred_class = np.argmax(probs)
-        print('Predicted class:', class_names[pred_class])
+        print('Predicted class: ', class_names[pred_class])
         if category == pred_class:
             acc += 1
 
