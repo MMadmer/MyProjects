@@ -10,7 +10,8 @@ def update_progressbar(progressbar, value):
 
 
 def main():
-    num_files = 20
+    start_file = 21
+    num_files = 45
     folders = range(0, 12, 2)
     selection_folder_prefix = "Selection_proc"
     progress = 0
@@ -65,7 +66,7 @@ def main():
         #     os.makedirs(f"Selection_Seeds_Images/proc_{folder}")
 
         # Split raw selection into pol sig
-        for i in range(1, num_files + 1):
+        for i in range(start_file, num_files + 1):
             file_path = os.path.join(folder_name, f"{i}.txt")
             if not os.path.exists(file_path):
                 print(f"The file {file_path} does not exist.")
@@ -117,7 +118,7 @@ def main():
                 # plt.close()
 
             # Progress
-            progress += 1 / (num_files * len(folders)) * 100
+            progress += 1 / ((num_files + 1 - start_file) * len(folders)) * 100
             print("{:.2f}".format(progress), "%")
 
             update_progressbar(progressbar, progress)

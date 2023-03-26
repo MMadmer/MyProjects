@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import ttk
 import time
 import datetime
+import Logging as Log
 
 
 def relu(t):
@@ -91,6 +92,12 @@ def update_progressbar(progress_bar, value):
     progress_bar["value"] = value
 
 
+log_categories = [
+    "logResult",
+    "logStatus"
+]
+log = Log.Logging(True)
+
 # ----------------Main------------------
 INPUT_DIM = 5000
 OUT_DIM = 6
@@ -101,22 +108,24 @@ H_DIM_3 = 128
 x = np.random.randn(1, INPUT_DIM)
 y = random.randint(0, OUT_DIM - 1)
 
-print("Loading training sample...")
-base_dir = os.path.abspath('./Plot_of_Seed/Seeds')
-retrieved_files = 150 + 1
+log.log(log_categories[1], 1, "Loading training sample...")
+base_dir = os.path.abspath("./Plot_of_Seed/Seeds")
+retrieved_files = 200 + 1
 dataset = []
+
+np.set_printoptions(threshold=np.inf)
 
 for directory in os.listdir(base_dir):
     full_path = os.path.join(base_dir, directory)
-    if not os.path.isdir(full_path) or not directory.startswith('Selection_proc_'):
+    if not os.path.isdir(full_path) or not directory.startswith("Selection_proc_"):
         continue
     print(directory)
 
-    category = int(directory[len('Selection_proc_'):])
+    category = int(directory[len("Selection_proc_"):])
     category = int(category / 2)
     # category = category_converter(category)
 
-    for i in range(retrieved_files, 7000):
+    for i in range(retrieved_files, 20000):
         if not os.path.exists(f"{full_path}/{i}.txt"):
             continue
 
@@ -128,7 +137,7 @@ for directory in os.listdir(base_dir):
 
         print(f"{full_path}/{i}.txt")
 
-print("Done")
+log.log(log_categories[1], 1, "Done")
 # print(dataset)
 
 # ---------------------------------
@@ -160,7 +169,7 @@ b4 = (b4 - 0.5) * 2 * np.sqrt(1 / H_DIM_3)
 # ---------------------------------
 
 ALPHA = 0.001
-NUM_EPOCHS = 250
+NUM_EPOCHS = 2500
 BATCH_SIZE = 16
 
 loss_arr = []
@@ -170,6 +179,7 @@ progress = 0
 root = tk.Tk()
 root.title("Selection creating")
 
+log.log(log_categories[1], 1, "Learning starting")
 progressbar = ttk.Progressbar(root, length=300, mode="determinate")
 progressbar.pack()
 
@@ -239,23 +249,38 @@ for ep in range(NUM_EPOCHS):
     diff_time = max_time - current_time
 
     remaining_time = datetime.timedelta(seconds=diff_time)
-    remaining_time_str = str(remaining_time - datetime.timedelta(microseconds=remaining_time.microseconds)).split(':')[-3:]
+    remaining_time_str = str(remaining_time - datetime.timedelta(microseconds=remaining_time.microseconds)).split(':')[
+                         -3:]
     print("Time remaining: " + ':'.join(remaining_time_str))
 
 root.destroy()
+log.log(log_categories[1], 1, "Done")
 
-print("Calculating training accuracy...")
+log.log(log_categories[1], 1, "Calculating training accuracy...")
 accuracy = calc_accuracy()
-print("Done")
+log.log(log_categories[1], 1, "Done")
 
-print("W1: ", W1)
-print("b1: ", b1)
-print("W2: ", W2)
-print("b2: ", b2)
-print("W3: ", W3)
-print("b3: ", b3)
-print("W4: ", W4)
-print("b4: ", b4)
+log.log(log_categories[1], 1, "Weights saving")
+if not os.path.exists(f"results/{log.log_time}"):
+    os.makedirs(f"results/{log.log_time}")
+
+np.savetxt(f"results/{log.log_time}/W1.txt", W1)
+np.savetxt(f"results/{log.log_time}/b1.txt", b1)
+np.savetxt(f"results/{log.log_time}/W2.txt", W2)
+np.savetxt(f"results/{log.log_time}/b2.txt", b2)
+np.savetxt(f"results/{log.log_time}/W3.txt", W3)
+np.savetxt(f"results/{log.log_time}/b3.txt", b3)
+np.savetxt(f"results/{log.log_time}/W4.txt", W4)
+np.savetxt(f"results/{log.log_time}/b4.txt", b4)
+# print("W1: ", W1)
+# print("b1: ", b1)
+# print("W2: ", W2)
+# print("b2: ", b2)
+# print("W3: ", W3)
+# print("b3: ", b3)
+# print("W4: ", W4)
+# print("b4: ", b4)
+log.log(log_categories[1], 1, "Done")
 
 real_accuracy = []
 
@@ -293,17 +318,25 @@ for directory in os.listdir(base_dir):
 
     real_accuracy.append(acc / (retrieved_files - 1) * 100)
 
-print()
-print("Training average accuracy: " + "{:.2f}".format(accuracy * 100), '%')
+log.log(log_categories[0], 1, f"Epochs count: {NUM_EPOCHS}")
+log.log(log_categories[0], 1, f"Batch size: {BATCH_SIZE}")
+log.log(log_categories[0], 1, f"Alpha: {ALPHA}")
+log.log(log_categories[0], 1, f"Neurons in 1st layer: {H_DIM_1}")
+log.log(log_categories[0], 1, f"Neurons in 2nd layer: {H_DIM_2}")
+log.log(log_categories[0], 1, f"Neurons in 3rd layer: {H_DIM_3}")
+log.log(log_categories[0], 1, f"Test set files for each type: {retrieved_files - 1}")
 
-print("Real accuracy")
-print(f"0%: " + "{:.2f}".format(real_accuracy[0]), '%')
-print(f"2%: " + "{:.2f}".format(real_accuracy[2]), '%')
-print(f"4%: " + "{:.2f}".format(real_accuracy[3]), '%')
-print(f"6%: " + "{:.2f}".format(real_accuracy[4]), '%')
-print(f"8%: " + "{:.2f}".format(real_accuracy[5]), '%')
-print(f"10%: " + "{:.2f}".format(real_accuracy[1]), '%')
-print(f"Average real accuracy: " + "{:.2f}".format(sum(real_accuracy) / len(real_accuracy)), '%')
+log.log(log_categories[0], 1, "Training average accuracy: " + "{:.2f}".format(accuracy * 100) + '%')
+log.log(log_categories[0], 1, "Real accuracy")
+log.log(log_categories[0], 1, f"0%: " + "{:.2f}".format(real_accuracy[0]) + '%')
+log.log(log_categories[0], 1, f"2%: " + "{:.2f}".format(real_accuracy[2]) + '%')
+log.log(log_categories[0], 1, f"4%: " + "{:.2f}".format(real_accuracy[3]) + '%')
+log.log(log_categories[0], 1, f"6%: " + "{:.2f}".format(real_accuracy[4]) + '%')
+log.log(log_categories[0], 1, f"8%: " + "{:.2f}".format(real_accuracy[5]) + '%')
+log.log(log_categories[0], 1, f"10%: " + "{:.2f}".format(real_accuracy[1]) + '%')
+log.log(log_categories[0], 1, f"Average real accuracy: " + "{:.2f}".format(sum(real_accuracy) / len(real_accuracy)) +
+        '%')
 
 plt.plot(loss_arr)
+plt.savefig(f"results/{log.log_time}/loss_plot.png")
 plt.show()

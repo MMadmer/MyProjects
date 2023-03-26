@@ -99,8 +99,7 @@ class MyApp(QWidget):
 
         self.btnReset = QPushButton("Reset", self)
         self.btnReset.clicked.connect(self.reset)
-        self.btnReset.move(int(self.btnBinary.x() + 8),
-                           self.btnBinary.y() + self.btnBinary.height() - 5)
+        self.btnReset.move(int(self.btnBinary.x() + 8), self.btnBinary.y() + self.btnBinary.height() - 5)
 
         self.sOffset = QSlider(Qt.Horizontal, self)
         self.sOffset.setRange(-128, 128)

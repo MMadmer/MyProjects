@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import os
 
-file = f"proc_4"
-files = 0
+file = f"proc_2"
+start_file = 21
+files = 45
 t = []
 V = []
 progress = 0
@@ -15,7 +16,7 @@ progress = 0
 if not os.path.exists(file):
     print(f"The folder {file} does not exist.")
 else:
-    for i in range(0, files + 1):
+    for i in range(start_file, files + 1):
         file_path = f'{file}/{i}.txt'
         if not os.path.exists(file_path):
             print(f"The file {file_path} does not exist.")
@@ -47,5 +48,5 @@ else:
 
         t.clear()
         V.clear()
-        progress += 1 / (files * 6) * 100
+        progress += 1 / (files - start_file + 1) * 100
         print("{:.2f}".format(progress), '%')
